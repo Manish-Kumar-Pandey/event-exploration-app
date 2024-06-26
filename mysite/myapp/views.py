@@ -62,6 +62,11 @@ def events(request):
                 print("The start date in 'date_str' is not after 'date_to_compare'.")
         print("************************************", len(filtered_objects_by_date))
 
+    common_objects = find_common_objects(filtered_objects_by_country, filtered_objects_by_genre, filtered_objects_by_date)
+    print("########################################", len(common_objects))
+    if(len(common_objects)>=1):
+        print("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
+        return JsonResponse({'events':common_objects})
     return JsonResponse(data['_embedded'])
 
 
@@ -115,7 +120,22 @@ def compare_dates(date_str, date_to_compare):
   # Compare the dates
   return date_obj >= date_to_compare
 
-# Example usage
-date_str = "2023-12-11T16:00:00Z"
-date_to_compare = "2023-12-09"
+def find_common_objects(array1, array2, array3):
+    """
+      Finds the common objects present in all three input arrays based on unique identifiers.
 
+      Args:
+        array1: A list of dictionaries (assumed to have a unique 'id' key).
+        array2: A list of dictionaries (assumed to have a unique 'id' key).
+        array3: A list of dictionaries (assumed to have a unique 'id' key).
+
+      Returns:
+        A list containing the common objects found in all three arrays based on their unique identifiers.
+    """
+    common_ids = set(obj['id'] for obj in array1)  # Extract unique IDs from array1
+    # Iterate through remaining arrays and keep only objects with IDs in common_ids
+    for arr in (array2, array3):
+      common_ids = common_ids.intersection(set(obj['id'] for obj in arr))
+    # Recreate the common objects list based on IDs (optional)
+    common_objects = [obj for obj in array1 if obj['id'] in common_ids]
+    return common_objects
