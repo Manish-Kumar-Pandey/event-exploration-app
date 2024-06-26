@@ -1,4 +1,5 @@
 from django.shortcuts import render, HttpResponse
+from django.http import JsonResponse
 import requests
 
 # Create your views here.
@@ -18,7 +19,7 @@ def events(request):
     #     events = events.filter(title__icontains=query) | events.filter(description__icontains=query)
     # context = {'events': events, 'query': query}  # Pass events and query to template
     # return render(request, 'events.html', context)
-    return HttpResponse(data['_embedded'])
+    return JsonResponse(data['_embedded'])
 
 
 def fetch_data(api_url, param1_name, param1_value, param2_name, param2_value):
