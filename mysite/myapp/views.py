@@ -1,5 +1,6 @@
 from django.shortcuts import render, HttpResponse
 from django.http import JsonResponse
+from datetime import datetime
 import requests
 
 # Create your views here.
@@ -43,6 +44,24 @@ def events(request):
                     filtered_objects_by_genre.append(item)
         print("************************************", len(filtered_objects_by_genre))
 
+    if(startDate and endDate):
+        filtered_objects_by_date = []
+        for item in data['_embedded'].get('events'):
+            print("************************************")
+            is_after = compare_dates(item['sales']['public']['startDateTime'], startDate)
+            if is_after:
+                print("The start date in 'date_str' is after 'date_to_compare'.")
+                print("Let's check for end date!")
+                is_endDate_after = compare_dates(item['sales']['public']['endDateTime'], endDate)
+                if is_endDate_after:
+                    print("The end date in 'date_str' is after 'date_to_compare'.")
+                else:
+                    print("The end date in 'date_str' is not after 'date_to_compare'.")
+                    filtered_objects_by_date.append(item)
+            else:
+                print("The start date in 'date_str' is not after 'date_to_compare'.")
+        print("************************************", len(filtered_objects_by_date))
+
     return JsonResponse(data['_embedded'])
 
 
@@ -58,7 +77,7 @@ def fetch_data(api_url, param1_name, param1_value, param2_name, param2_value):
       A dictionary containing the API response data or None if an error occurs.
     """
 
-#   params = {param1_name: param1_value, param2_name: param2_value}
+    # params = {param1_name: param1_value, param2_name: param2_value}
     params = {param1_name: param1_value}
     try:
         response = requests.get(api_url, params=params)
@@ -67,3 +86,36 @@ def fetch_data(api_url, param1_name, param1_value, param2_name, param2_value):
     except requests.exceptions.RequestException as e:
         print(f"Error fetching data from API: {e}")
         return None
+
+
+def compare_dates(date_str, date_to_compare):
+  """
+  Compares a date in format "YYYY-MM-DDTHH:MM:SSZ" with another date.
+
+  Args:
+    date_str: The date string in ISO 8601 format (e.g., "2023-12-11T16:00:00Z").
+    date_to_compare: The date object or string to compare with (e.g., "2023-12-09").
+
+  Returns:
+    True if the date in 'date_str' is after 'date_to_compare', False otherwise.
+  """
+
+  # Parse the date string
+  date_obj = datetime.strptime(date_str, "%Y-%m-%dT%H:%M:%SZ")
+
+  # Handle potential exceptions during parsing (optional)
+  try:
+    # Convert date_to_compare to datetime if it's a string
+    if isinstance(date_to_compare, str):
+      date_to_compare = datetime.strptime(date_to_compare, "%Y-%m-%d")
+  except ValueError:
+    print("Invalid date format for date_to_compare.")
+    return False
+
+  # Compare the dates
+  return date_obj >= date_to_compare
+
+# Example usage
+date_str = "2023-12-11T16:00:00Z"
+date_to_compare = "2023-12-09"
+
