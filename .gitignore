@@ -1,0 +1,32 @@
+# Environment files
+.env
+venv
+# Database files
+db.sqlite3
+
+# Generated files
+*.log
+*.pot
+*.pyc
+__pycache__/
+
+# Local settings
+local_settings.py
+
+# Coverage reports
+coverage/
+htmlcov/
+
+# IDE/Editor files
+*.idea/
+.vscode/
+
+# OS specific temporary files
+*.swp
+*.swo
+
+# Static files (usually managed by a separate app like django-staticfiles)
+static/
+
+# Media files (user uploaded content)
+media/
