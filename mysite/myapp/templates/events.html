@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Event Explorer</title>
+</head>
+<body>
+  <h1>Events</h1>
+  <form method="get">
+    <label for="query">Search Events:</label>
+    <input type="text" name="query" id="query" value="{{ query }}">
+    <button type="submit">Search</button>
+  </form>
+  {% if events %}
+    <ul>
+      {% for event in events %}
+        <li>
+          <h2>{{ event.title }}</h2>
+          <p>{{ event.description }}</p>
+          </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p>No events found matching your query.</p>
+  {% endif %}
+</body>
+</html>
