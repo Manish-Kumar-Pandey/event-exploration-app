@@ -14,7 +14,7 @@ def events(request):
     param2_name="city" 
     param2_value="london"
     data=fetch_data(api_url, param1_name, param1_value, param2_name, param2_value)  # Fetch all events
-    print(data['_embedded'])
+    # print(data['_embedded'])
     # if query:
     #     events = events.filter(title__icontains=query) | events.filter(description__icontains=query)
     # context = {'events': events, 'query': query}  # Pass events and query to template
