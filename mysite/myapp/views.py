@@ -7,7 +7,11 @@ def home(request):
     return HttpResponse("Hello World!")
 
 def events(request):
-    query = request.GET.get('query')  # Get user query from URL parameter
+    country = request.GET.get('country')  # Get user query from URL parameter
+    genre = request.GET.get('genre')
+    startDate = request.GET.get('startDate')
+    endDate = request.GET.get('endDate')
+    print("query and request is", request.GET.get('country'), genre, startDate, endDate)
     api_url="https://app.ticketmaster.com/discovery/v2/events.json"
     param1_name="apikey"
     param1_value= "rEAPENhGBiaW6jrS290UfWgSzKgk7zx9"
@@ -19,6 +23,26 @@ def events(request):
     #     events = events.filter(title__icontains=query) | events.filter(description__icontains=query)
     # context = {'events': events, 'query': query}  # Pass events and query to template
     # return render(request, 'events.html', context)
+    if(country):
+        filtered_objects_by_country = []
+        for item in data['_embedded'].get('events'):
+            # print("************************************")
+            for venue in item['_embedded'].get('venues'):
+                print(venue['country'].get('name'))
+                if(country.lower() in venue['country'].get('name').lower()):
+                    filtered_objects_by_country.append(item)
+        print("************************************", len(filtered_objects_by_country))
+    
+    if(genre):
+        filtered_objects_by_genre = []
+        for item in data['_embedded'].get('events'):
+            # print("************************************")
+            for genr in item['classifications']:
+                print(genr['genre'].get('name'))
+                if(genre.lower() in genr['genre'].get('name').lower()):
+                    filtered_objects_by_genre.append(item)
+        print("************************************", len(filtered_objects_by_genre))
+
     return JsonResponse(data['_embedded'])
 
 
